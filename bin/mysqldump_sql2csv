@@ -5,7 +5,7 @@ use warnings;
 
 $| = 1;
 
-# mysqldump -uroot -p mysql help_keyword > help_keyword.sql
+# mysqldump -uroot -p mysql help_keyword > test.sql
 my $sql_file = shift @ARGV;
 die ".sql should be passed" unless $sql_file;
 
@@ -39,3 +39,47 @@ while (sysread($fh, my $bytes, $size)) {
 close($fh);
 
 1;
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+mysqldump_sql2txt - convert mysqldump .sql to .csv
+
+=head1 USAGE
+
+    mysqldump_sql2txt test.sql > test.csv
+
+=head1 DESCRIPTION
+
+Once you got the csv there, you can use below code to parse:
+
+    use Text::CSV_XS;
+    my $csv = Text::CSV_XS->new({
+        binary => 1,
+        quote_char => "'",
+        escape_char => "\\",
+        allow_loose_escapes => 1
+    }) or die "Cannot use CSV: " . Text::CSV_XS->error_diag();
+
+=head1 CAUTION
+
+it is not working for some mysqldump SQLs when the field content contains "),(".
+
+=head1 AUTHOR
+
+Fayland Lam E<lt>fayland@gmail.comE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2014- Fayland Lam
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 SEE ALSO
+
+=cut

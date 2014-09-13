@@ -11,15 +11,12 @@ __END__
 
 =head1 NAME
 
-App::mysqldump_sql2txt - Blah blah blah
+App::mysqldump_sql2txt - convert mysqldump .sql to .csv
 
-=head1 SYNOPSIS
-
-  use App::mysqldump_sql2txt;
 
 =head1 DESCRIPTION
 
-App::mysqldump_sql2txt is
+See L<mysqldump_sql2csv>
 
 =head1 AUTHOR
 
