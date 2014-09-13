@@ -11,7 +11,7 @@ die ".sql should be passed" unless $sql_file;
 
 my $size = 100; # 2 ** 16
 
-my $buf; my $_is_started = 0; my $_is_end = 0;
+my $buf; my $_is_started = 0;
 open(my $fh, '<', $sql_file) or die "Can't open $sql_file: $!\n";
 while (sysread($fh, my $bytes, $size)) {
     $buf .= $bytes;
@@ -22,16 +22,16 @@ while (sysread($fh, my $bytes, $size)) {
     }
     next unless $_is_started;
 
-    # I know it will be broken if the value contains '),' or ');' inside BUT my file do not have that case for now
-    while ($buf =~ s/\(([^\)]+)\)([\,\;])//) {
+    # I know it will be broken in some certain case but I do not have that case
+    while ($buf =~ s/\((.*?)\)((\,\()|(\;[\r\n]+))/$2/s) { ## ends with '),(' or ');\n'
         my ($pair, $splitter) = ($1, $2);
-        $_is_end = 1 if $splitter eq ';';
+        $_is_started = 0 if $splitter =~ ';'; # LINE END
 
         print "$pair\n"; # just print out
 
-        last if $_is_end;
+        last unless $_is_started;
+        $buf =~ s/^\,//;
     }
-    last if $_is_end;
 }
 close($fh);
 
