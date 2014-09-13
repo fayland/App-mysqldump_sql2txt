@@ -1,0 +1,7 @@
+/App-mysqldump_sql2txt-*
+/.build
+/_build*
+/Build
+MYMETA.*
+!META.json
+/.prove
