@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 use FindBin qw/$Bin/;
 
+$ENV{TEST_MYSQLDUMP_SQL2CSV} = 1;
 my $output = `perl $Bin/../bin/mysqldump_sql2csv $Bin/help_keyword.sql`;
 $output =~ s/^\s+|\s+$//g;
 my @lines = split(/[\r\n]+/, $output);

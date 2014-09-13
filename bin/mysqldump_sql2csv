@@ -9,7 +9,8 @@ $| = 1;
 my $sql_file = shift @ARGV;
 die ".sql should be passed" unless $sql_file;
 
-my $size = 100; # 2 ** 16
+my $size = 2 ** 16;
+$size = 100 if $ENV{TEST_MYSQLDUMP_SQL2CSV};
 
 my $buf; my $_is_started = 0;
 open(my $fh, '<', $sql_file) or die "Can't open $sql_file: $!\n";
