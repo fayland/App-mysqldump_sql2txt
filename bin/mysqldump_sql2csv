@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+$| = 1;
+
+# mysqldump -uroot -p mysql help_keyword > help_keyword.sql
+my $sql_file = shift @ARGV;
+die ".sql should be passed" unless $sql_file;
+
+my $size = 100; # 2 ** 16
+
+my $buf; my $_is_started = 0; my $_is_end = 0;
+open(my $fh, '<', $sql_file) or die "Can't open $sql_file: $!\n";
+while (sysread($fh, my $bytes, $size)) {
+    $buf .= $bytes;
+    if ($buf =~ /^INSERT INTO \`(.*?)\` VALUES /m) {
+        # we do not care the stuff before INSERT INTO
+        $buf =~ s/^(.*?)INSERT INTO \`(.*?)\` VALUES //s;
+        $_is_started = 1;
+    }
+    next unless $_is_started;
+
+    # I know it will be broken if the value contains '),' or ');' inside BUT my file do not have that case for now
+    while ($buf =~ s/\(([^\)]+)\)([\,\;])//) {
+        my ($pair, $splitter) = ($1, $2);
+        $_is_end = 1 if $splitter eq ';';
+
+        print "$pair\n"; # just print out
+
+        last if $_is_end;
+    }
+    last if $_is_end;
+}
+close($fh);
+
+1;
